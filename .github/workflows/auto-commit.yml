@@ -1,0 +1,30 @@
+name: Auto Commit
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'   # 00, 06, 12, 18 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Make random commits
+        run: |
+          git config user.name "faizanali2k05"
+          git config user.email "165537437+faizanali2k05@users.noreply.github.com"
+
+          COUNT=$(( (RANDOM % 2) + 2 ))   # 2-3 commits per run
+          for i in $(seq 1 $COUNT); do
+            echo "$(date -u) - entry $i" >> activity.log
+            git add activity.log
+            git commit -m "update activity log $(date -u +%H:%M:%S)"
+            sleep 2
+          done
+
+          git push
